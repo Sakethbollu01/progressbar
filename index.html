@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Counter Application</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 50px;
+    }
+
+    .buttons {
+      margin-bottom: 20px;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      margin: 0 10px;
+      cursor: pointer;
+    }
+
+    .progress-container {
+      width: 80%;
+      margin: 20px auto;
+      height: 30px;
+      background-color: #e0e0e0;
+      border-radius: 15px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background-color: #76c7c0;
+      transition: width 0.5s ease-in-out;
+    }
+
+    .history-buttons {
+      margin-top: 20px;
+    }
+
+    .history-buttons button {
+      padding: 10px 20px;
+      font-size: 16px;
+      margin: 0 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Counter Application</h1>
+  <div class="buttons">
+    <button id="subtractBtn">-1</button>
+    <button id="addBtn">+1</button>
+  </div>
+  <div class="progress-container">
+    <div id="progressBar" class="progress-bar"></div>
+  </div>
+  <div class="history-buttons">
+    <button id="undoBtn">Undo</button>
+    <button id="redoBtn">Redo</button>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      let num = 0;
+      let history = [0];
+      let currentStep = 0;
+
+      const subtractBtn = document.getElementById('subtractBtn');
+      const addBtn = document.getElementById('addBtn');
+      const undoBtn = document.getElementById('undoBtn');
+      const redoBtn = document.getElementById('redoBtn');
+      const progressBar = document.getElementById('progressBar');
+
+      const updateHistory = (newNum) => {
+        history = history.slice(0, currentStep + 1);
+        history.push(newNum);
+        currentStep += 1;
+        num = newNum;
+        updateUI();
+      };
+
+      const updateUI = () => {
+        progressBar.style.width = `${(num / 150) * 100}%`;
+        undoBtn.disabled = currentStep === 0;
+        redoBtn.disabled = currentStep === history.length - 1;
+      };
+
+      subtractBtn.addEventListener('click', () => {
+        const newNum = Math.max(num - 1, 0);
+        updateHistory(newNum);
+      });
+
+      addBtn.addEventListener('click', () => {
+        const newNum = Math.min(num + 1, 150);
+        updateHistory(newNum);
+      });
+
+      undoBtn.addEventListener('click', () => {
+        if (currentStep > 0) {
+          currentStep -= 1;
+          num = history[currentStep];
+          updateUI();
+        }
+      });
+
+      redoBtn.addEventListener('click', () => {
+        if (currentStep < history.length - 1) {
+          currentStep += 1;
+          num = history[currentStep];
+          updateUI();
+        }
+      });
+
+      updateUI();
+    });
+  </script>
+</body>
+</html>
